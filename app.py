@@ -36,22 +36,45 @@ SAMPLE_SOURCES: dict[str, str] = {
 }
 
 
+def _fetch_with_retry(url: str, retries: int = 3, base_delay: float = 5.0) -> bytes:
+    last_exc: Exception | None = None
+    for attempt in range(retries):
+        try:
+            req = Request(url, headers={"User-Agent": "hf-inference-providers-demo/1.0 (educational)"})
+            with urlopen(req, timeout=30) as r:
+                return r.read()
+        except HTTPError as e:
+            last_exc = e
+            if e.code == 429 and attempt < retries - 1:
+                delay = base_delay * (attempt + 1)
+                print(f"  429 rate-limited, retry in {delay}s...")
+                time.sleep(delay)
+                continue
+            raise
+        except Exception as e:
+            last_exc = e
+            raise
+    raise last_exc  # type: ignore
+
+
 def ensure_samples() -> None:
     """Download missing example files from Wikimedia Commons.
 
-    Idempotent — only fetches what's not already on disk. Skips silently
-    on network failure so the rest of the app can still start (failing
-    sample alone shows '확인 불가' message in UI)."""
+    Idempotent — only fetches what's not already on disk. Adds 1.5s gap
+    between requests + retries on HTTP 429 to respect Wikimedia rate limits.
+    Skips silently on persistent failure so the app still starts."""
+    fetched_any = False
     for name, url in SAMPLE_SOURCES.items():
         p = EXAMPLES_DIR / name
         if p.exists() and p.stat().st_size > 0:
             continue
+        if fetched_any:
+            time.sleep(1.5)  # gap between consecutive downloads
         try:
-            req = Request(url, headers={"User-Agent": "hf-inference-providers-demo/1.0 (educational)"})
-            with urlopen(req, timeout=30) as r:
-                data = r.read()
+            data = _fetch_with_retry(url)
             p.write_bytes(data)
             print(f"[ensure_samples] fetched {name} ({len(data)} bytes)")
+            fetched_any = True
         except Exception as e:
             print(f"[ensure_samples] failed {name}: {type(e).__name__}: {e}")
 
@@ -670,7 +693,7 @@ def compare_run(task: str, models_csv: str, system: str, prompt: str,
 TASK_CHOICES = list(TASKS)
 TASK_HELP_MD = "\n".join(f"- `{t}` — {TASK_LABEL[t]}" for t in TASKS)
 
-with gr.Blocks(title="HF Inference Providers Demo") as demo:
+with gr.Blocks(title="HF Inference Providers Demo", theme=gr.themes.Soft()) as demo:
     gr.Markdown(INTRO_MD)
 
     with gr.Tabs():
@@ -854,6 +877,4 @@ if __name__ == "__main__":
     demo.launch(
         server_name="0.0.0.0" if is_space else "127.0.0.1",
         server_port=int(os.getenv("PORT", 7860)),
-        ssr_mode=False,
-        theme=gr.themes.Soft(),
     )
