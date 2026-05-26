@@ -1,0 +1,49 @@
+[
+  {
+    "task": "_token",
+    "info": {
+      "token_present": true,
+      "token_prefix": "hf_daKDk",
+      "whoami": {
+        "name": "jaeiJJ",
+        "type": "user"
+      },
+      "fine_grained_permissions": [
+        "inference.serverless.write"
+      ],
+      "role": "fineGrained",
+      "chat_probe": "ok",
+      "chat_probe_ms": 372
+    }
+  },
+  {
+    "task": "2. text-to-text  (Llama-3.1-8B-Instruct)",
+    "status": "ok",
+    "latency_ms": 325,
+    "info": "Hello how are you"
+  },
+  {
+    "task": "3. image-text-to-text  (Qwen2.5-VL-7B)",
+    "status": "fail",
+    "latency_ms": 981,
+    "error": "BadRequestError: (Request ID: Root=1-6a15e2e7-16ff4a602cee31280babc54e;7530b361-34e3-4f65-829e-c89e6782aa51)\n\nBad request:\n{'message': \"The requested model 'Qwen/Qwen2.5-VL-7B-Instruct' is not supported by any provider you have enabled.\", 'type': 'invalid_request_error', 'param': 'model', 'code': 'model_not_supported'}\n  status=400\n  body={\"error\":{\"message\":\"The requested model 'Qwen/Qwen2.5-VL-7B-Instruct' is not supported by any provider you have enabled.\",\"type\":\"invalid_request_error\",\"param\":\"model\",\"code\":\"model_not_supported\"}}"
+  },
+  {
+    "task": "4. text-to-image  (FLUX.1-schnell)",
+    "status": "ok",
+    "latency_ms": 7678,
+    "info": "PIL image (1024, 1024) mode=RGB"
+  },
+  {
+    "task": "5. text-to-speech  (mms-tts-eng)",
+    "status": "fail",
+    "latency_ms": 233,
+    "error": "StopIteration: "
+  },
+  {
+    "task": "6. speech-to-text  (whisper-large-v3-turbo)",
+    "status": "fail",
+    "latency_ms": 765,
+    "error": "BadRequestError: (Request ID: Root=1-6a15e2f0-2c0e0f644362e71503fb10c3;383bd9ac-c217-481d-a7e6-0cec66179f6e)\n\nBad request:\nContent type \"None\" not supported.\n                Supported content types are:\n                application/json, application/json; charset=UTF-8, text/csv, text/plain, image/png, image/jpeg, image/jpg, image/tiff, image/bmp, image/gif, image/webp, image/x-image, audio/x-flac, audio/flac, audio/mpeg, audio/x-mpeg-3, audio/wave, audio/wav, audio/x-wav, audio/ogg, audio/x-audio, audio/webm, audio/webm;codecs=opus, audio/AMR, audio/amr, audio/AMR-WB, audio/AMR-WB+, audio/m4a, audio/x-m4a\n  status=400\n  body={\"error\":\"\\n                Content type \\\"None\\\" not supported.\\n                Supported content types are:\\n                application/json, application/json; charset=UTF-8, text/csv, text/plain, image/png, image/jpeg, image/jpg, image/tiff, image/bmp, image/gif, image/webp, image/x-image, audio/x-flac, audio/flac, audio/mpeg, audio/x-mpeg-3, audio/wave, audio/wav, audio/x-wav, audio/ogg, aud"
+  }
+]

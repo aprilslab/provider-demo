@@ -1,0 +1,36 @@
+name: Sync to HuggingFace Space
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to HuggingFace Space
+        env:
+          # Write-scoped token for pushing to the Space repo.
+          # Create at https://huggingface.co/settings/tokens with
+          # "Write access to contents/settings of selected repos" → pick this Space.
+          # Register as GitHub repo secret named HF_DEPLOY_TOKEN.
+          HF_DEPLOY_TOKEN: ${{ secrets.HF_DEPLOY_TOKEN }}
+          HF_USER: jaeiJJ
+          HF_SPACE: hf-inference-providers-demo
+        run: |
+          set -e
+          if [ -z "$HF_DEPLOY_TOKEN" ]; then
+            echo "HF_DEPLOY_TOKEN Secret is empty."
+            exit 1
+          fi
+          git push https://${HF_USER}:${HF_DEPLOY_TOKEN}@huggingface.co/spaces/${HF_USER}/${HF_SPACE} main --force

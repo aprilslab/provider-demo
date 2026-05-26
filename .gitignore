@@ -1,0 +1,21 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.gradio/
+diagnose_report.json
+
+# Binary samples — fetched at runtime by ensure_samples() in app.py.
+# HF Spaces git rejects binaries without Xet/LFS.
+examples/*.jpg
+examples/*.jpeg
+examples/*.png
+examples/*.ogg
+examples/*.wav
+examples/*.gif
+examples/*.mp3
+examples/*.mp4
+!examples/.gitkeep
+
+# Debug screenshots — not part of the deployable app
+playwright-*.png
