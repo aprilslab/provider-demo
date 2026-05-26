@@ -727,8 +727,16 @@ with gr.Blocks(title="HF Inference Providers Demo", theme=gr.themes.Soft()) as d
             with gr.Row():
                 pg_task = gr.Radio(choices=TASK_CHOICES, value="text-to-text", label="Task")
             with gr.Row():
-                pg_model = gr.Dropdown(label="Model", interactive=True)
-                pg_sample = gr.Dropdown(label="Sample preset", interactive=True)
+                pg_model = gr.Dropdown(
+                    choices=TASK_MODELS["text-to-text"],
+                    value=TASK_MODELS["text-to-text"][0],
+                    label="Model", interactive=True, allow_custom_value=True,
+                )
+                pg_sample = gr.Dropdown(
+                    choices=[s[0] for s in SAMPLES["text-to-text"]],
+                    value=SAMPLES["text-to-text"][0][0] if SAMPLES["text-to-text"] else None,
+                    label="Sample preset", interactive=True, allow_custom_value=True,
+                )
             pg_key = gr.Textbox(label="HF_TOKEN override (선택)", type="password", placeholder=".env 사용 시 비워둠")
 
             with gr.Accordion("System prompt", open=False, visible=TASK_IO["text-to-text"]["system"]) as pg_system_acc:
